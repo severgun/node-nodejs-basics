@@ -1,6 +1,7 @@
 import path from "path";
 import { release, version } from "os";
 import http from "http";
+import fs from "fs/promises";
 
 import("./files/c.js");
 
@@ -9,13 +10,19 @@ const random = Math.random();
 let unknownObject;
 
 if (random > 0.5) {
-  ({ default: unknownObject } = await import("./files/a.json", {
-    with: { type: "json" },
-  }));
+  try {
+    unknownObject = await fs.readFile("./files/a.json");
+    unknownObject = JSON.parse(unknownObject);
+  } catch (error) {
+    throw error;
+  }
 } else {
-  ({ default: unknownObject } = await import("./files/b.json", {
-    with: { type: "json" },
-  }));
+  try {
+    unknownObject = await fs.readFile("./files/b.json");
+    unknownObject = JSON.parse(unknownObject);
+  } catch (error) {
+    throw error;
+  }
 }
 
 const __dirname = import.meta.dirname;
